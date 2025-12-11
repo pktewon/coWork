@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: cowork
+
+  # MySQL Database Configuration
+  datasource:
+    url: jdbc:mysql://localhost:3306/cowork?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: 1111
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+    open-in-view: false
+
+server:
+  port: 8082
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+
+# JWT Configuration
+jwt:
+  secret: v3ry-s3cr3t-k3y-f0r-jwt-sign1ng-must-b3-l0ng3r-th4n-32-chars
+  expiration: 3600000
+
+# Swagger Configuration
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+
+# Logging
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
