@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Plus, UserPlus, X, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { teamApi } from '../../api/teamApi';
 import { taskApi } from '../../api/taskApi';
 import type { Team, TeamMember, Task, TaskUpdateRequest } from '../../types';
@@ -37,6 +38,7 @@ export function TeamDetail() {
   });
   const [inviteLoginId, setInviteLoginId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { t } = useTranslation();
 
   const fetchData = async () => {
     try {
@@ -51,7 +53,7 @@ export function TeamDetail() {
       setTasks(tasksData);
     } catch (error) {
       console.error(error);
-      toast.error('Failed to load team data');
+      toast.error(t('team.loadError'));
       navigate('/teams');
     } finally {
       setIsLoading(false);
@@ -72,7 +74,7 @@ export function TeamDetail() {
         workerLoginId: newTask.workerLoginId || undefined,
       };
       await taskApi.createTask(id, payload);
-      toast.success('Task created successfully');
+      toast.success(t('task.createSuccess'));
       setShowTaskModal(false);
       setNewTask({
         title: '',
@@ -94,7 +96,7 @@ export function TeamDetail() {
     setIsSubmitting(true);
     try {
       await teamApi.inviteMember(id, { loginId: inviteLoginId });
-      toast.success('Member invited successfully');
+      toast.success(t('team.inviteSuccess'));
       setShowInviteModal(false);
       setInviteLoginId('');
       fetchData(); // Refresh members
@@ -108,7 +110,7 @@ export function TeamDetail() {
   const handleUpdateTask = async (taskId: number, data: TaskUpdateRequest) => {
     try {
       await taskApi.updateTask(taskId, data);
-      toast.success('Task updated');
+      toast.success(t('task.updateSuccess'));
       fetchData();
     } catch {
       // Error handled by interceptor
@@ -118,7 +120,7 @@ export function TeamDetail() {
   const handleDeleteTask = async (taskId: number) => {
     try {
       await taskApi.deleteTask(taskId);
-      toast.success('Task deleted');
+      toast.success(t('task.deleteSuccess'));
       fetchData();
     } catch {
       // Error handled by interceptor
@@ -150,14 +152,14 @@ export function TeamDetail() {
               onClick={() => setShowInviteModal(true)}
               leftIcon={<UserPlus className="w-4 h-4" />}
             >
-              Invite
+              {t('team.invite')}
             </Button>
           </div>
           <Button
             onClick={() => setShowTaskModal(true)}
             leftIcon={<Plus className="w-4 h-4" />}
           >
-            New Task
+            {t('task.newTask')}
           </Button>
         </div>
       }
@@ -171,7 +173,7 @@ export function TeamDetail() {
               <div className="flex items-center justify-between mb-2 px-1">
                 <h3 className="font-semibold text-gray-700 flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-                  To Do
+                  {t('task.status.todo')}
                 </h3>
                 <span className="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full">
                   {tasks.filter(t => t.status === 'TODO').length}
@@ -197,7 +199,7 @@ export function TeamDetail() {
               <div className="flex items-center justify-between mb-2 px-1">
                 <h3 className="font-semibold text-gray-700 flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                  In Progress
+                  {t('task.status.inProgress')}
                 </h3>
                 <span className="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full">
                   {tasks.filter(t => t.status === 'IN_PROGRESS').length}
@@ -223,7 +225,7 @@ export function TeamDetail() {
               <div className="flex items-center justify-between mb-2 px-1">
                 <h3 className="font-semibold text-gray-700 flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                  Done
+                  {t('task.status.done')}
                 </h3>
                 <span className="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full">
                   {tasks.filter(t => t.status === 'DONE').length}
@@ -252,7 +254,7 @@ export function TeamDetail() {
             <CardContent className="p-0 flex flex-col h-full">
               <div className="p-4 border-b border-gray-100">
                 <h3 className="font-bold text-gray-900 flex items-center justify-between">
-                  Team Members
+                  {t('team.teamMembers')}
                   <span className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">
                     {members.length}
                   </span>
@@ -274,7 +276,7 @@ export function TeamDetail() {
                     </div>
                     {member.role === 'LEADER' && (
                       <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">
-                        LEADER
+                        {t('team.leader')}
                       </span>
                     )}
                   </div>
@@ -287,7 +289,7 @@ export function TeamDetail() {
                   onClick={() => setShowInviteModal(true)}
                   leftIcon={<UserPlus className="w-4 h-4" />}
                 >
-                  Invite Member
+                  {t('team.inviteMember')}
                 </Button>
               </div>
             </CardContent>
@@ -310,7 +312,7 @@ export function TeamDetail() {
           <Card className="w-full max-w-lg bg-white shadow-2xl animate-in fade-in zoom-in duration-200">
             <CardContent className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold text-gray-900">Create New Task</h3>
+                <h3 className="text-xl font-bold text-gray-900">{t('task.createNewTask')}</h3>
                 <button 
                   onClick={() => setShowTaskModal(false)}
                   className="text-gray-400 hover:text-gray-600"
@@ -321,39 +323,39 @@ export function TeamDetail() {
               
               <form onSubmit={handleCreateTask} className="space-y-4">
                 <Input
-                  label="Title"
+                  label={t('task.title')}
                   value={newTask.title}
                   onChange={e => setNewTask({ ...newTask, title: e.target.value })}
                   required
-                  placeholder="Task title"
+                  placeholder={t('task.enterTitle')}
                 />
                 
                 <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-gray-700">Content</label>
+                  <label className="block text-sm font-medium text-gray-700">{t('task.content')}</label>
                   <textarea
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[100px]"
                     value={newTask.content}
                     onChange={e => setNewTask({ ...newTask, content: e.target.value })}
-                    placeholder="Task description..."
+                    placeholder={t('task.enterContent')}
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="block text-sm font-medium text-gray-700">Priority</label>
+                    <label className="block text-sm font-medium text-gray-700">{t('task.priority')}</label>
                     <select
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       value={newTask.priority}
                       onChange={e => setNewTask({ ...newTask, priority: e.target.value as any })}
                     >
-                      <option value="LOW">Low</option>
-                      <option value="MEDIUM">Medium</option>
-                      <option value="HIGH">High</option>
+                      <option value="LOW">{t('task.priorityLevel.low')}</option>
+                      <option value="MEDIUM">{t('task.priorityLevel.medium')}</option>
+                      <option value="HIGH">{t('task.priorityLevel.high')}</option>
                     </select>
                   </div>
                   
                   <Input
-                    label="Deadline"
+                    label={t('task.deadline')}
                     type="date"
                     value={newTask.deadline}
                     onChange={e => setNewTask({ ...newTask, deadline: e.target.value })}
@@ -361,13 +363,13 @@ export function TeamDetail() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-gray-700">Assignee</label>
+                  <label className="block text-sm font-medium text-gray-700">{t('task.assignee')}</label>
                   <select
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     value={newTask.workerLoginId}
                     onChange={e => setNewTask({ ...newTask, workerLoginId: e.target.value })}
                   >
-                    <option value="">Unassigned</option>
+                    <option value="">{t('task.unassigned')}</option>
                     {members.map(member => (
                       <option key={member.id} value={member.loginId}>
                         {member.nickname} ({member.loginId})
@@ -382,13 +384,13 @@ export function TeamDetail() {
                     variant="ghost"
                     onClick={() => setShowTaskModal(false)}
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </Button>
                   <Button
                     type="submit"
                     isLoading={isSubmitting}
                   >
-                    Create Task
+                    {t('task.createButton')}
                   </Button>
                 </div>
               </form>
@@ -403,7 +405,7 @@ export function TeamDetail() {
           <Card className="w-full max-w-md bg-white shadow-2xl animate-in fade-in zoom-in duration-200">
             <CardContent className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold text-gray-900">Invite Member</h3>
+                <h3 className="text-xl font-bold text-gray-900">{t('team.inviteMember')}</h3>
                 <button 
                   onClick={() => setShowInviteModal(false)}
                   className="text-gray-400 hover:text-gray-600"
@@ -414,16 +416,16 @@ export function TeamDetail() {
               
               <form onSubmit={handleInviteMember} className="space-y-4">
                 <Input
-                  label="Member ID"
+                  label={t('team.memberId')}
                   value={inviteLoginId}
                   onChange={e => setInviteLoginId(e.target.value)}
                   required
-                  placeholder="Enter login ID to invite"
+                  placeholder={t('team.enterMemberId')}
                   leftIcon={<Search className="w-4 h-4" />}
                 />
                 
                 <div className="bg-blue-50 text-blue-700 p-3 rounded-lg text-sm">
-                  <p>Inviting a member allows them to see this team and its tasks.</p>
+                  <p>{t('team.inviteHint')}</p>
                 </div>
 
                 <div className="flex justify-end gap-3 mt-6">
@@ -432,13 +434,13 @@ export function TeamDetail() {
                     variant="ghost"
                     onClick={() => setShowInviteModal(false)}
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </Button>
                   <Button
                     type="submit"
                     isLoading={isSubmitting}
                   >
-                    Invite
+                    {t('team.invite')}
                   </Button>
                 </div>
               </form>

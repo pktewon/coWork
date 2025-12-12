@@ -1,12 +1,15 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Users, CheckSquare, LogOut, User, LayoutDashboard } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from '../ui/Button';
+import { LanguageSwitcher } from '../ui/LanguageSwitcher';
 
 export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
 
   const handleLogout = () => {
     logout();
@@ -42,11 +45,11 @@ export function Header() {
               <nav className="hidden md:flex items-center gap-1">
                 <Link to="/teams" className={navLinkClass('/teams')}>
                   <Users className="w-4 h-4" />
-                  Teams
+                  {t('team.teams')}
                 </Link>
                 <Link to="/tasks" className={navLinkClass('/tasks')}>
                   <CheckSquare className="w-4 h-4" />
-                  My Tasks
+                  {t('task.myTasks')}
                 </Link>
               </nav>
             )}
@@ -54,6 +57,7 @@ export function Header() {
 
           {/* User Section */}
           <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             {isAuthenticated ? (
               <>
                 <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full">
@@ -70,19 +74,19 @@ export function Header() {
                   onClick={handleLogout}
                   leftIcon={<LogOut className="w-4 h-4" />}
                 >
-                  <span className="hidden sm:inline">Logout</span>
+                  <span className="hidden sm:inline">{t('auth.logout')}</span>
                 </Button>
               </>
             ) : (
               <>
                 <Link to="/login">
                   <Button variant="ghost" size="sm">
-                    Login
+                    {t('auth.login')}
                   </Button>
                 </Link>
                 <Link to="/signup">
                   <Button variant="primary" size="sm">
-                    Sign Up
+                    {t('auth.signup')}
                   </Button>
                 </Link>
               </>
@@ -95,11 +99,11 @@ export function Header() {
           <nav className="md:hidden flex items-center gap-2 pb-3 -mt-1">
             <Link to="/teams" className={navLinkClass('/teams')}>
               <Users className="w-4 h-4" />
-              Teams
+              {t('team.teams')}
             </Link>
             <Link to="/tasks" className={navLinkClass('/tasks')}>
               <CheckSquare className="w-4 h-4" />
-              My Tasks
+              {t('task.myTasks')}
             </Link>
           </nav>
         )}

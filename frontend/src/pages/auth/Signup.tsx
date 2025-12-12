@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, LayoutDashboard, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
@@ -13,6 +14,7 @@ export function Signup() {
   const [isLoading, setIsLoading] = useState(false);
   const { signup } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -20,7 +22,7 @@ export function Signup() {
 
     try {
       await signup({ loginId, password, nickname });
-      toast.success('Account created successfully! Please login.');
+      toast.success(t('auth.signupSuccess'));
       navigate('/login');
     } catch {
       // Error is handled by axios interceptor
@@ -40,38 +42,38 @@ export function Signup() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl shadow-lg mb-4">
             <LayoutDashboard className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Create account</h1>
-          <p className="mt-2 text-gray-600">Join CoWork and start collaborating</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('auth.createAccountTitle')}</h1>
+          <p className="mt-2 text-gray-600">{t('auth.createAccountSubtitle')}</p>
         </div>
 
         {/* Card */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
             <Input
-              label="Login ID"
+              label={t('auth.loginId')}
               type="text"
               value={loginId}
               onChange={(e) => setLoginId(e.target.value)}
               required
-              placeholder="Choose a login ID"
+              placeholder={t('auth.chooseLoginId')}
               leftIcon={<Mail className="w-5 h-5" />}
             />
             <Input
-              label="Nickname"
+              label={t('auth.nickname')}
               type="text"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               required
-              placeholder="Choose a display name"
+              placeholder={t('auth.chooseNickname')}
               leftIcon={<User className="w-5 h-5" />}
             />
             <Input
-              label="Password"
+              label={t('auth.password')}
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              placeholder="Create a strong password"
+              placeholder={t('auth.createPassword')}
               leftIcon={<Lock className="w-5 h-5" />}
             />
             
@@ -82,18 +84,18 @@ export function Signup() {
               isLoading={isLoading}
               rightIcon={!isLoading && <ArrowRight className="w-5 h-5" />}
             >
-              Create Account
+              {t('auth.createAccountButton')}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Already have an account?{' '}
+              {t('auth.hasAccount')}{' '}
               <Link 
                 to="/login" 
                 className="font-semibold text-primary-600 hover:text-primary-500 transition-colors"
               >
-                Sign in
+                {t('auth.signInLink')}
               </Link>
             </p>
           </div>

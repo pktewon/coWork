@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Users, X, FolderOpen } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { teamApi } from '../../api/teamApi';
 import type { Team } from '../../types';
 import { MainLayout } from '../../components/layout/MainLayout';
@@ -17,6 +18,7 @@ export function TeamList() {
   const [newTeamName, setNewTeamName] = useState('');
   const [newTeamDescription, setNewTeamDescription] = useState('');
   const [isCreating, setIsCreating] = useState(false);
+  const { t } = useTranslation();
 
   const fetchTeams = async () => {
     try {
@@ -42,7 +44,7 @@ export function TeamList() {
         name: newTeamName,
         description: newTeamDescription,
       });
-      toast.success('Team created successfully!');
+      toast.success(t('team.createSuccess'));
       setShowCreateForm(false);
       setNewTeamName('');
       setNewTeamDescription('');
@@ -56,7 +58,7 @@ export function TeamList() {
 
   if (isLoading) {
     return (
-      <MainLayout title="My Teams">
+      <MainLayout title={t('team.myTeams')}>
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-200 border-t-primary-600"></div>
         </div>
@@ -66,15 +68,15 @@ export function TeamList() {
 
   return (
     <MainLayout
-      title="My Teams"
-      subtitle="Manage your teams and collaborate with members"
+      title={t('team.myTeams')}
+      subtitle={t('team.manageSubtitle')}
       action={
         <Button
           onClick={() => setShowCreateForm(!showCreateForm)}
           leftIcon={showCreateForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
           variant={showCreateForm ? 'secondary' : 'primary'}
         >
-          {showCreateForm ? 'Cancel' : 'Create Team'}
+          {showCreateForm ? t('common.cancel') : t('team.createTeam')}
         </Button>
       }
     >
@@ -83,26 +85,26 @@ export function TeamList() {
         {showCreateForm && (
           <Card className="border-2 border-primary-200 bg-primary-50/30">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Create New Team</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('team.createNewTeam')}</h3>
               <form onSubmit={handleCreateTeam} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input
-                    label="Team Name"
+                    label={t('team.teamName')}
                     value={newTeamName}
                     onChange={(e) => setNewTeamName(e.target.value)}
                     required
-                    placeholder="Enter team name"
+                    placeholder={t('team.enterTeamName')}
                   />
                   <Input
-                    label="Description (Optional)"
+                    label={t('team.descriptionOptional')}
                     value={newTeamDescription}
                     onChange={(e) => setNewTeamDescription(e.target.value)}
-                    placeholder="Enter team description"
+                    placeholder={t('team.enterDescription')}
                   />
                 </div>
                 <div className="flex justify-end">
                   <Button type="submit" isLoading={isCreating} leftIcon={<Plus className="w-4 h-4" />}>
-                    Create Team
+                    {t('team.createTeam')}
                   </Button>
                 </div>
               </form>
@@ -118,10 +120,10 @@ export function TeamList() {
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
                   <FolderOpen className="w-8 h-8 text-gray-400" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-1">No teams yet</h3>
-                <p className="text-gray-500 mb-4">Create your first team to start collaborating</p>
+                <h3 className="text-lg font-medium text-gray-900 mb-1">{t('team.noTeams')}</h3>
+                <p className="text-gray-500 mb-4">{t('team.noTeamsSubtitle')}</p>
                 <Button onClick={() => setShowCreateForm(true)} leftIcon={<Plus className="w-4 h-4" />}>
-                  Create Team
+                  {t('team.createTeam')}
                 </Button>
               </div>
             </CardContent>
@@ -152,7 +154,7 @@ export function TeamList() {
                     
                     <div className="mt-4 pt-4 border-t border-gray-100 flex items-center text-sm text-gray-500">
                       <Users className="w-4 h-4 mr-1.5" />
-                      <span>View team details →</span>
+                      <span>{t('team.viewDetails')} →</span>
                     </div>
                   </CardContent>
                 </Card>

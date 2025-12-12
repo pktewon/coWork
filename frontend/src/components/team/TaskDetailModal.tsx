@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { X, Send, User, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { taskApi } from '../../api/taskApi';
 import type { Task, Comment } from '../../types';
 import { Card } from '../ui/Card';
@@ -17,6 +18,7 @@ export function TaskDetailModal({ task, onClose, onUpdate }: TaskDetailModalProp
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { t } = useTranslation();
 
   const fetchComments = async () => {
     try {
@@ -24,7 +26,7 @@ export function TaskDetailModal({ task, onClose, onUpdate }: TaskDetailModalProp
       setComments(data);
     } catch (error) {
       console.error(error);
-      toast.error('Failed to load comments');
+      toast.error(t('task.loadCommentsError'));
     }
   };
 
@@ -42,10 +44,10 @@ export function TaskDetailModal({ task, onClose, onUpdate }: TaskDetailModalProp
       setNewComment('');
       fetchComments();
       onUpdate(); // Notify parent to refresh if needed
-      toast.success('Comment added');
+      toast.success(t('task.commentAdded'));
     } catch (error) {
       console.error(error);
-      toast.error('Failed to add comment');
+      toast.error(t('task.addCommentError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -82,26 +84,26 @@ export function TaskDetailModal({ task, onClose, onUpdate }: TaskDetailModalProp
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div className="col-span-2 space-y-6">
               <div>
-                <h3 className="text-sm font-semibold text-gray-700 mb-2">Description</h3>
+                <h3 className="text-sm font-semibold text-gray-700 mb-2">{t('task.description')}</h3>
                 <div className="bg-gray-50 rounded-lg p-4 text-gray-700 whitespace-pre-wrap min-h-[100px]">
-                  {task.content || 'No description provided.'}
+                  {task.content || t('task.noDescription')}
                 </div>
               </div>
             </div>
 
             <div className="space-y-4">
               <div>
-                <h3 className="text-sm font-semibold text-gray-700 mb-1">Assignee</h3>
+                <h3 className="text-sm font-semibold text-gray-700 mb-1">{t('task.assignee')}</h3>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <User className="w-4 h-4" />
-                  <span>{task.workerNickname || 'Unassigned'}</span>
+                  <span>{task.workerNickname || t('task.unassigned')}</span>
                 </div>
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-gray-700 mb-1">Deadline</h3>
+                <h3 className="text-sm font-semibold text-gray-700 mb-1">{t('task.deadline')}</h3>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Clock className="w-4 h-4" />
-                  <span>{task.deadline ? new Date(task.deadline).toLocaleDateString() : 'No deadline'}</span>
+                  <span>{task.deadline ? new Date(task.deadline).toLocaleDateString() : t('task.noDeadline')}</span>
                 </div>
               </div>
             </div>
@@ -110,7 +112,7 @@ export function TaskDetailModal({ task, onClose, onUpdate }: TaskDetailModalProp
           {/* Comments Section */}
           <div className="border-t border-gray-100 pt-6">
             <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-              Comments
+              {t('task.comments')}
               <span className="text-sm font-normal text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
                 {comments.length}
               </span>
@@ -136,7 +138,7 @@ export function TaskDetailModal({ task, onClose, onUpdate }: TaskDetailModalProp
               
               {comments.length === 0 && (
                 <p className="text-center text-gray-500 text-sm py-4">
-                  No comments yet. Be the first to add one!
+                  {t('task.noComments')}
                 </p>
               )}
             </div>
@@ -149,7 +151,7 @@ export function TaskDetailModal({ task, onClose, onUpdate }: TaskDetailModalProp
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Write a comment..."
+              placeholder={t('task.writeComment')}
               className="flex-1 resize-none border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent min-h-[50px] max-h-[100px]"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {

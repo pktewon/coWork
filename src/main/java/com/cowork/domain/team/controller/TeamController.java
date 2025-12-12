@@ -1,6 +1,10 @@
 package com.cowork.domain.team.controller;
 
-import com.cowork.domain.team.dto.*;
+import com.cowork.domain.team.dto.InviteRequest;
+import com.cowork.domain.team.dto.TeamCreateRequest;
+import com.cowork.domain.team.dto.TeamDetailResponse;
+import com.cowork.domain.team.dto.TeamMemberResponse;
+import com.cowork.domain.team.dto.TeamResponse;
 import com.cowork.domain.team.service.TeamService;
 import com.cowork.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -66,10 +70,10 @@ public class TeamController {
 
     @Operation(summary = "팀 상세 조회", description = "팀 상세 정보와 멤버 목록을 조회합니다.")
     @GetMapping("/{teamId}")
-    public ResponseEntity<ApiResponse<TeamDetailResponse>> getTeamDetail(
+    public ResponseEntity<ApiResponse<com.cowork.domain.team.dto.TeamDetailResponse>> getTeamDetail(
             @AuthenticationPrincipal String loginId,
             @PathVariable Long teamId) {
-        TeamDetailResponse response = teamService.getTeamDetail(teamId, loginId);
+        com.cowork.domain.team.dto.TeamDetailResponse response = teamService.getTeamDetail(teamId, loginId);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 }
